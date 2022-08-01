@@ -6,6 +6,7 @@ const { ProductInCart } = require('../models/productInCart.model');
 //  * UTILS
 const { catchAsync } = require('../utils/catchAsync.util');
 const { AppError } = require('../utils/appError.util');
+const { Order } = require('../models/order.model');
 
 const getUserCart = catchAsync(async (req, res, next) => {
   const { sessionUser } = req;
@@ -166,7 +167,50 @@ const purchaseCart = catchAsync(async (req, res, next) => {
 
   await Promise.all(productsPurchasedPromises);
 
-  res.status(200).json({ status: 'success' });
+
+  const order = await Order.create({
+    userId: sessionUser.id,
+    cartId : cart.id,
+    totalPrice: totalPrice
+  })
+
+  const orderInfo = await Order.findOne({
+    where:{
+        id : order.id
+    },
+
+    include:[{
+        model: Cart, 
+        attributes:["id"],
+
+        include:[{
+          model: ProductInCart,
+          where:{
+            status:"purchased"
+          },
+          attributes:[
+             "quantity"
+          ],
+
+          include:[{
+              model:Product,
+              attributes:[
+                  "title",
+                  "price"
+              ]
+          }]
+        }]
+    }]
+  })
+
+  //Send email
+
+  await new Email(sessionUser.email).sendPurchased(orderInfo)
+
+  res.status(200).json({ 
+      status: 'success',
+      orderInfo
+ });
 });
 
 const removeProductFromCart = catchAsync(async (req, res, next) => {

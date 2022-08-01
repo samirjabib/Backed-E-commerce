@@ -19,11 +19,13 @@ class Email {
 		if (process.env.NODE_ENV === 'production') {
 			// Connect to SendGrid
 			return nodemailer.createTransport({
-				service: 'SendGrid',
-				auth: {
-					user: 'apikey',
-					pass: process.env.SENDGRID_API_KEY,
-				},
+					host:"smtp.mailtrap.io",
+					port:2525,
+					auth: {
+						user:process.env.MAILTRAP_USER,
+						pass:process.env.MAILTRAP_PASSWORD
+					}
+				
 			});
 		}
 
@@ -53,16 +55,16 @@ class Email {
 		});
 	}
 
-	async sendWelcome(name) {
-		await this.send('welcome', 'Welcome to our app', { name });
+	async sendWelcome(username) {
+		await this.send('welcome', 'Bienvenido a nuetra tienda', { username });
 	}
 
-	async sendNewPost(title, content) {
-		await this.send('newPost', 'You have created a new post', {
-			title,
-			content,
-		});
+	async sendPurchased(orderInfo) {
+		await this.send('purchased', 'Gracias por tu compra', { orderInfo });
 	}
+
+
+
 }
 
 module.exports = { Email };

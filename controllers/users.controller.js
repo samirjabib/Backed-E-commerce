@@ -5,12 +5,18 @@ const dotenv = require('dotenv');
 // * MODELS
 
 const { User } = require('../models/user.model');
+const { Order } = require('../models/order.model')
+
 
 
 
 // * UTILS
 const { catchAsync } = require('../utils/catchAsync.util');
 const { AppError } = require('../utils/appError.util');
+const { Cart } = require('../models/cart.model');
+const { ProductInCart } = require('../models/productInCart.model');
+const { Product } = require('../models/product.model');
+const { Email } = require('../utils/email.util');
 
 dotenv.config({ path: './config.env' });
 
@@ -42,6 +48,10 @@ const createUser = catchAsync(async (req, res, next) => {
 
   // Remove password from response
   newUser.password = undefined;
+
+  //send Email
+
+  await new Email(email).sendWelcome(username)
 
   res.status(201).json({ newUser });
 }); 
@@ -108,12 +118,58 @@ const getUserProducts = catchAsync(async (req, res, next) => { // TODO : Make Lo
   res.status(200).json({ status: 'success' });
 });
 
-const getUserOrders = catchAsync(async (req, res, next) => { // TODO : Make Logic
-  res.status(200).json({ status: 'success' });
+const getUserOrders = catchAsync(async (req, res, next) => { 
+
+  const {sessionUser} =req;
+
+  const orders = await Order.findAll({
+      where:{
+          userId: userActive.id,
+      },
+      
+      include:[{   
+          model: Cart, where:{status:"purchased", userId: sessionUser.id},
+          attributes:["id"],
+          include:[{
+              model: ProductInCart, where:{status:"purchased"},attributes:["quantity"],
+              include:[{
+                  model:Product, attributes:["title","price"]
+              }]
+              
+
+          }]
+      }],
+         
+  })
+
+ 
+
+  res.status(200).json({
+      status:"succes",
+      orders
+  })
+
+
 });
 
-const getUserOrderById = catchAsync(async (req, res, next) => { // TODO : Make Logic
-  res.status(200).json({ status: 'success' });
+const getUserOrderById = catchAsync(async (req, res, next) => { 
+  const { id } = req.params;
+
+  const order = await Order.findOne({
+    where:{
+      id,
+    },
+    include:[{
+      model:Cart, attributes:["id"],
+      include:[{
+        model:Product, attributes: ["title","price"]
+      }]
+    }]
+  })
+  res.status(200).json({
+    status:"success",
+    order
+  })
 });
 
 module.exports = {

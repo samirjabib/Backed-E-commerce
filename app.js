@@ -14,8 +14,9 @@ const { usersRouter } = require('./routes/users.routes');
 const { productsRouter } =  require('./routes/products.routes');
 const { cartRouter } =  require('./routes/cart.routes');
 
+// * MIDDLEWARES
 
-
+const { AppError } = require('./utils/appError.util')
 
 //Init express
 const app = express();
