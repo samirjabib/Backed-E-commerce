@@ -4,14 +4,15 @@ const compression = require('compression');  //compress the responses for better
 const morgan = require('morgan'); // It helps us to know what requests are coming to the server.
 const cors = require('cors'); 
 const rateLimit = require('express-rate-limit'); //limit requests
-
+const path = require('path');
 
 //  * CONTROLLERS
 const {  globalErrorHandler } = require('./controllers/error.controller')
 
 // *  ROUTES
 const { usersRouter } = require('./routes/users.routes');
-const  {productsRouter  } =  require('./routes/products.routes');
+const { productsRouter } =  require('./routes/products.routes');
+const { cartRouter } =  require('./routes/cart.routes');
 
 
 
@@ -19,11 +20,18 @@ const  {productsRouter  } =  require('./routes/products.routes');
 //Init express
 const app = express();
 
-//Enable CORS
-app.use(cors());
 
 // Enable incoming JSON data
 app.use(express.json());
+
+
+// Set template engine
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+//Enable CORS
+app.use(cors());
+
 
 // Add security headers
 app.use(helmet());
@@ -51,6 +59,7 @@ const limiter = rateLimit({
 
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/products', productsRouter);
+app.use('/api/v1/cart', cartRouter);
 
 
 
