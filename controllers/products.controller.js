@@ -43,7 +43,6 @@ const getProductById = catchAsync(async (req, res, next) => {
   res.status(200).json({ product });
 });
 
-
 const updateProduct = catchAsync(async (req, res, next) => {
   const { product } = req;
   const { title, description, quantity, price } = req.body;

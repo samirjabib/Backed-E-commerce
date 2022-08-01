@@ -1,11 +1,13 @@
-// Models
+//  * MODELS 
 const { Product } = require('../models/product.model');
 
-// Utils
+//  * UTILS
 const { catchAsync } = require('../utils/catchAsync.util');
 const { AppError } = require('../utils/appError.util');
 
-const protectProductOwner = catchAsync(async (req, res, next) => {
+const protectProductOwner = catchAsync(
+  async (req, res, next) => { 
+
   next();
 });
 
