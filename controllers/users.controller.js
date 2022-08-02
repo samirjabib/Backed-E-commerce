@@ -114,8 +114,18 @@ const checkToken = catchAsync(async (req, res, next) => {
   res.status(200).json({ user: req.sessionUser });
 });
 
-const getUserProducts = catchAsync(async (req, res, next) => { // TODO : Make Logic
-  res.status(200).json({ status: 'success' });
+const getUserProducts = catchAsync(async (req, res, next) => {
+
+  const {sessionUser} = req;
+
+  const products = await Product.findAll({
+      where:{
+        userId : sessionUser.id
+      }
+  })
+
+
+  res.status(200).json({ status: 'success', products});
 });
 
 const getUserOrders = catchAsync(async (req, res, next) => { 
