@@ -14,6 +14,8 @@ const { usersRouter } = require('./routes/users.routes');
 const { productsRouter } =  require('./routes/products.routes');
 const { cartRouter } =  require('./routes/cart.routes');
 
+const { viewsRouter} = require('./routes/views.routes');
+
 // * MIDDLEWARES
 
 const { AppError } = require('./utils/appError.util')
@@ -58,6 +60,7 @@ const limiter = rateLimit({
 
 //  *ENDPOINTS
 
+app.use('/', viewsRouter)
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/products', productsRouter);
 app.use('/api/v1/cart', cartRouter);

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/d489e7c6-2c9e-4475-80ff-2bdf320b2d63/microsoft.web/sites/subscriptions/d489e7c6-2c9e-4475-80ff-2bdf320b2d63/resourceGroups/server-academlo/providers/Microsoft.Web/sites/azure-academlo",
+    "appService.deploySubpath": "."
+}
